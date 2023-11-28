@@ -105,10 +105,3 @@ module.exports = {
   postMovie,
   updateMovie,
 };
-// {
-//   "firstname": "José",
-//   "lastname": "PatLeDire",
-//   "email": "jose.PatLeDire@example.com",
-//   "city": "Paris",
-//   "language": "English"
-// }

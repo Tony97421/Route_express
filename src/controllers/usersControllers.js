@@ -18,8 +18,7 @@ const getUsersById = (req, res) => {
     .query("SELECT * FROM users WHERE id = ?", [id])
     .then(([users]) => {
       if (users[0] != null) {
-        res.json(users[0]);
-        res.sendStatus(200);
+        res.status(200).send(users[0]);
       } else {
         res.sendStatus(404);
       }
@@ -37,11 +36,11 @@ const postUser = (req, res) => {
       [firstname, lastname, email, city, language]
     )
     .then(([result]) => {
-      res.status(201).send({ id: result.insertId });
+      res.status(201).json({ id: result.insertId });
     })
     .catch((err) => {
       console.error(err);
-      res.status(500);
+      res.sendStatus(500);
     });
 };
 
