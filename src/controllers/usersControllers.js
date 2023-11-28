@@ -1,55 +1,74 @@
 const database = require("../../database");
 
 const getUsers = (req, res) => {
-  
-    database
+  database
     .query("SELECT * FROM users")
     .then(([users]) => {
       res.status(200).json(users);
     })
     .catch((err) => {
-        console.error(err);
-        
-    })
-  }
+      console.error(err);
+    });
+};
 
-  const getUsersById = (req, res) =>{
-    const id = parseInt(req.params.id);
+const getUsersById = (req, res) => {
+  const id = parseInt(req.params.id);
 
-    database
+  database
     .query("SELECT * FROM users WHERE id = ?", [id])
     .then(([users]) => {
-        if (users[0] != null) {
-          res.json(users[0]);
-          res.sendStatus(200);
-        } else {
-          res.sendStatus(404);
-        }
-      })
-      .catch((err) => {
-        console.error(err);
-      });
-  };
+      if (users[0] != null) {
+        res.json(users[0]);
+        res.sendStatus(200);
+      } else {
+        res.sendStatus(404);
+      }
+    })
+    .catch((err) => {
+      console.error(err);
+    });
+};
 
-  const postUser = (req, res) => {
-    const { lastname, firstname, email, city, language } = req.body
-    database
+const postUser = (req, res) => {
+  const { lastname, firstname, email, city, language } = req.body;
+  database
     .query(
       "INSERT INTO users (firstname, lastname, email, city, language) VALUES (?, ?, ?, ?, ? )",
       [firstname, lastname, email, city, language]
     )
-      .then(([result]) => {
-        res.status(201).send({id: result.insertId})
-      })
-      .catch((err) => {
-        console.error(err);
-        res.status(500)
-      });
-  };
-  
+    .then(([result]) => {
+      res.status(201).send({ id: result.insertId });
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500);
+    });
+};
 
-  module.exports = {
-    getUsers,
-    getUsersById,
-    postUser,
+const updateUser = (req, res) => {
+  const id = parseInt (req.params.id);
+  const { firstname, lastname, email, city, language } = req.body;
+
+  database
+    .query(
+      "UPDATE users SET firstname = ?, lastname = ?, email = ?, city =?, language = ? WHERE id = ?",
+      [firstname, lastname, email, city, language, id]
+    )
+    .then(([result]) => {
+      if (result.affectedRows === 0) {
+        res.sendStatus(404);
+      } else {
+        res.sendStatus(204);
+      }
+    })
+    .catch((error) => {
+      console.error(error);
+      res.sendStatus(500);
+    });
+};
+module.exports = {
+  getUsers,
+  getUsersById,
+  postUser,
+  updateUser,
 };
