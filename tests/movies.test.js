@@ -18,7 +18,7 @@ describe("GET /api/movies", () => {
 
 describe("GET /api/movies/:id", () => {
   it("should return one movie", async () => {
-    const response = await request(app).get("/api/movies/1");
+    const response = await request(app).get("/api/movies/2");
 
     expect(response.headers["content-type"]).toMatch(/json/);
 
@@ -115,10 +115,15 @@ describe("PUT /api/movies/:id", () => {
       duration: 120,
     };
 
-    const response = await request(app).put(`/api/movies/${id}`).send(updatedMovie);
+    const response = await request(app)
+      .put(`/api/movies/${id}`)
+      .send(updatedMovie);
 
     expect(response.status).toEqual(204);
-    const [movies] = await database.query("SELECT * FROM movies WHERE id=?", id);
+    const [movies] = await database.query(
+      "SELECT * FROM movies WHERE id=?",
+      id
+    );
 
     const [movieInDatabase] = movies;
 
@@ -159,6 +164,47 @@ describe("PUT /api/movies/:id", () => {
     };
 
     const response = await request(app).put("/api/movies/0").send(newMovie);
+
+    expect(response.status).toEqual(404);
+  });
+});
+
+describe("DELETE /api/movies/:id", () => {
+  it("should delete one movie", async () => {
+    const newMovie = {
+      title: "Wild is life",
+      director: "Alan Smithee",
+      year: "2023",
+      color: "0",
+      duration: 120,
+    };
+
+    const [result] = await database.query(
+      "INSERT INTO movies(title, director, year, color, duration) VALUES (?, ?, ?, ?, ?)",
+      [
+        newMovie.title,
+        newMovie.director,
+        newMovie.year,
+        newMovie.color,
+        newMovie.duration,
+      ]
+    );
+    const id = result.insertId;
+
+    const response = await request(app).delete(`/api/movies/${id}`);
+
+    expect(response.status).toEqual(204);
+  });
+
+  it("should return no movie", async () => {
+    const newMovie = {
+      title: "Wild is life",
+      director: "Alan Smithee",
+      year: "2023",
+      color: "0",
+      duration: 120,
+    };
+    const response = await request(app).delete("/api/movies/0").send(newMovie);
 
     expect(response.status).toEqual(404);
   });
