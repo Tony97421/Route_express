@@ -62,7 +62,7 @@ const updateUser = (req, res) => {
     })
     .catch((error) => {
       console.error(error);
-      res.sendStatus(500);
+      res.sendStatus(422);
     });
 };
 module.exports = {

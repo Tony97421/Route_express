@@ -92,7 +92,7 @@ const updateMovie = (req, res) => {
   })
   .catch((error) => {
     console.error(error);
-    res.sendStatus(500)
+    res.sendStatus(422)
   });
 };
 
